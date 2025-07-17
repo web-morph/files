@@ -20,10 +20,10 @@ public class FFmpegAutoConfiguration {
     @Bean("ffmpeg_path")
     public String ffmpegPath() throws IOException {
         try {
-            return Loader.load(Class.forName("org.bytedeco.ffmpeg.ffmpeg"));
+            return Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
         } catch (Throwable throwable) {
             throw new IOException("Missing dependency \"org.bytedeco:ffmpeg:7.1.1-1.5.12:" + Loader.getPlatform() +
-                    "-gpl\" on the classpath. Please add it to use ffmpeg.");
+                    "-gpl\" on the classpath. Please add it to use ffmpeg.", throwable);
         }
     }
 }
