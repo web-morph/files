@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 import java.nio.file.Path;
 
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 @Setter
 @AutoConfiguration
 @ConfigurationProperties("webmorph.files")
+@ComponentScan("com.github.webmorph.files")
 public class FilesAutoConfiguration {
     private Path folder = Path.of("files");
 
