@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
 import java.util.AbstractMap;
+import java.util.Map;
 
 /**
  * Service for handling image file operations such as conversion and upload event processing.
@@ -41,7 +42,7 @@ public class ImageService implements Listener {
         LocalImage image = new LocalImage(input).convert();
         this.repository.save(image)
                 .doOnNext(path -> {
-                    event.next(new AbstractMap.SimpleEntry<>("content-name", image.getInput().toFile().getName()));
+                    event.next(Map.of("content-name", image.getInput().toFile().getName()));
                     event.complete();
                 })
                 .subscribe(path -> this.eventBus.dispatchEvent(new ImageUploadEvent(new LocalImage(path))));

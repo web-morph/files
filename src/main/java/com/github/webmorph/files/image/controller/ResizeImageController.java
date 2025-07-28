@@ -29,9 +29,9 @@ public class ResizeImageController {
      * @return Mono emitting a key-value pair with the content name
      */
     @MessageMapping("image.resize")
-    public Mono<Map.Entry<String, String>> resizeImage(@Payload ResizeImageRequest request) {
+    public Mono<Map<String, String>> resizeImage(@Payload ResizeImageRequest request) {
         return Mono.fromCallable(() -> new LocalImage(this.fileService.pathOf(request.name)).resize(request.height))
-                .map(localImage -> new AbstractMap.SimpleEntry<>("content-name", localImage.getInput().toFile().getName()));
+                .map(localImage -> Map.of("content-name", localImage.getInput().toFile().getName()));
     }
 
     /**

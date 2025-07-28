@@ -27,14 +27,14 @@ public class FileUploadProcessEvent extends CancelableEvent {
     /**
      * Publisher for emitting progress and metadata updates.
      */
-    private final Sinks.Many<Map.Entry<String, String>> publisher = Sinks.many().unicast().onBackpressureBuffer();
+    private final Sinks.Many<Map<String, String>> publisher = Sinks.many().unicast().onBackpressureBuffer();
 
     /**
      * Emits a progress or metadata update.
      *
      * @param next the key-value pair to emit
      */
-    public void next(Map.Entry<String, String> next) {
+    public void next(Map<String, String> next) {
         this.publisher.tryEmitNext(next);
     }
 
@@ -50,7 +50,7 @@ public class FileUploadProcessEvent extends CancelableEvent {
      *
      * @return Flux emitting key-value pairs
      */
-    public Flux<Map.Entry<String, String>> asFlux() {
+    public Flux<Map<String, String>> asFlux() {
         return this.publisher.asFlux();
     }
 }

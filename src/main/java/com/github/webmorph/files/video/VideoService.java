@@ -17,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
 import java.util.AbstractMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -53,10 +54,10 @@ public class VideoService implements Listener {
         Path input = event.getInput();
         this.preview(input)
                 .flatMap(this.repository::save)
-                .doOnNext(previewPath -> event.next(new AbstractMap.SimpleEntry<>("preview-name", previewPath.toFile().getName())))
-                .zipWhen(previewPath -> this.convert(input, percent -> event.next(new AbstractMap.SimpleEntry<>("progress", percent.toString())))
+                .doOnNext(previewPath -> event.next(Map.of("preview-name", previewPath.toFile().getName())))
+                .zipWhen(previewPath -> this.convert(input, percent -> event.next(Map.of("progress", percent.toString())))
                         .flatMap(this.repository::save))
-                .doOnNext(tuple -> event.next(new AbstractMap.SimpleEntry<>("content-name", tuple.getT2().toFile().getName())))
+                .doOnNext(tuple -> event.next(Map.of("content-name", tuple.getT2().toFile().getName())))
                 .subscribe(tuple -> {
                     event.complete();
                     this.eventBus.dispatchEvent(new VideoUploadEvent(new LocalImage(tuple.getT1()), new LocalVideo(tuple.getT2())));

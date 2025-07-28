@@ -15,6 +15,7 @@ import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
 import java.util.AbstractMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -48,9 +49,9 @@ public class AudioService implements Listener {
         if (!event.getMimeType().contains("audio")) return;
         event.setCanceled(true);
         Path input = event.getInput();
-        this.convert(input, percent -> event.next(new AbstractMap.SimpleEntry<>("progress", percent.toString())))
+        this.convert(input, percent -> event.next(Map.of("progress", percent.toString())))
                 .flatMap(this.repository::save)
-                .doOnNext(path -> event.next(new AbstractMap.SimpleEntry<>("content-name", path.toFile().getName())))
+                .doOnNext(path -> event.next(Map.of("content-name", path.toFile().getName())))
                 .subscribe(path -> {
                     event.complete();
                     this.eventBus.dispatchEvent(new AudioUploadEvent(new LocalAudio(path)));
