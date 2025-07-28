@@ -1,6 +1,6 @@
 var javaVersion = 17;
 group = "com.github.webmorph"
-version = "1.1.0"
+version = "1.2.0"
 
 plugins {
     id("java-library")
@@ -23,6 +23,7 @@ repositories {
 dependencies {
     // Spring
     api("org.springframework.boot:spring-boot-starter-rsocket:3.5.0")
+    api("org.springframework.boot:spring-boot-starter-webflux:3.5.0")
     api("org.springframework.boot:spring-boot-configuration-processor:3.5.0")
 
     // EventBus

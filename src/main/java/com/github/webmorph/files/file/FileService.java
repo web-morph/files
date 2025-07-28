@@ -6,11 +6,13 @@ import com.github.webmorph.eventbus.event.EventPriority;
 import com.github.webmorph.eventbus.listener.Listener;
 import com.github.webmorph.files.file.event.FileUploadEvent;
 import com.github.webmorph.files.file.event.FileUploadProcessEvent;
+import com.github.webmorph.files.file.exception.FileNotFoundException;
 import com.github.webmorph.files.file.model.LocalFile;
 import com.github.webmorph.files.file.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.tika.Tika;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.stereotype.Service;
@@ -20,7 +22,6 @@ import reactor.core.scheduler.Schedulers;
 
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.AbstractMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -55,6 +56,17 @@ public class FileService implements Listener {
      */
     public Path pathOf(String name) {
         return this.repository.getFolder().resolve(name);
+    }
+
+    /**
+     * Loads a file as a FileSystemResource by name.
+     *
+     * @param name the file name
+     * @return Mono emitting the FileSystemResource if it exists
+     */
+    public Mono<FileSystemResource> load(String name) {
+        return this.repository.load(name)
+                .switchIfEmpty(Mono.error(new FileNotFoundException("File with name %s not found".formatted(name))));
     }
 
     /**
