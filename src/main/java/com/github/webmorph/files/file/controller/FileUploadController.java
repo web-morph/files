@@ -30,7 +30,7 @@ public class FileUploadController {
      * @return Flux emitting progress and metadata as key-value pairs
      */
     @MessageMapping("file.upload")
-    public Flux<Map.Entry<String, String>> upload(@Payload Flux<DataBuffer> chunks) {
+    public Flux<Map<String, String>> upload(@Payload Flux<DataBuffer> chunks) {
         return this.service.upload(chunks);
     }
 }

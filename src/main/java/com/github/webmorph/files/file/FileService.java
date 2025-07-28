@@ -63,7 +63,7 @@ public class FileService implements Listener {
      * @param chunks Flux of DataBuffer representing file chunks
      * @return Flux emitting progress and metadata as key-value pairs
      */
-    public Flux<Map.Entry<String, String>> upload(Flux<DataBuffer> chunks) {
+    public Flux<Map<String, String>> upload(Flux<DataBuffer> chunks) {
         String name = UUID.randomUUID().toString();
         Path tempFile = this.tmpDir.resolve(name);
         return DataBufferUtils.write(chunks, tempFile, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE)
@@ -87,7 +87,7 @@ public class FileService implements Listener {
         Path tempFile = event.getInput();
         this.repository.save(new LocalFile(tempFile))
                 .doOnNext(path -> {
-                    event.next(new AbstractMap.SimpleEntry<>("content-name", event.getInput().toFile().getName()));
+                    event.next(Map.of("content-name", event.getInput().toFile().getName()));
                     event.complete();
                 })
                 .subscribe(path -> this.eventBus.dispatchEvent(new FileUploadEvent(new LocalFile(path))));
