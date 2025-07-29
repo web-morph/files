@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.nio.file.Path;
-import java.util.AbstractMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -65,14 +64,15 @@ public class VideoService implements Listener {
     }
 
     /**
-     * Converts the input video file to H.264/AAC MP4 format and returns a Mono of the resulting LocalVideo.
+     * Converts the input video file to HLS-playlist format and returns a Mono of the resulting LocalVideo.
      *
      * @param input      the input file path
      * @param onProgress consumer for progress updates (percent)
      * @return Mono emitting the converted LocalVideo
      */
     public Mono<LocalVideo> convert(Path input, Consumer<Integer> onProgress) {
-        Path output = input.resolveSibling(UUID.randomUUID().toString());
+        Path playlist = input.resolveSibling(UUID.randomUUID().toString());
+        Path segment = this.repository.getFolder().resolve(UUID.randomUUID().toString());
         return this.ffmpegService.ffmpeg(
                         "-y",                                                                                             // overwrite without interactive
                         "-i", input.toString(),                                                                                            // input file
@@ -89,11 +89,14 @@ public class VideoService implements Listener {
                         "-movflags", "+faststart",                                                                              // web-optimization
                         "-progress", "-", // чтобы выдавал регулярно key=value
                         "-nostats",
-                        "-f", "mp4",                                                                                            // container format
-                        output.toString()                                                                                                  // output file
+                        "-f", "hls",                                                                                            // container format
+                        "-hls_time", "5",                                                                                     // segment duration
+                        "-hls_list_size", "0",                                                                                 // all segments in the playlist
+                        "-hls_segment_filename", segment.toString() + "-%04d",
+                        playlist.toString()                                             // output file
                 )
                 .doOnNext(onProgress)
-                .then(Mono.just(new LocalVideo(output)));
+                .then(Mono.just(new LocalVideo(playlist)));
     }
 
     /**
