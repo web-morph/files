@@ -1,6 +1,6 @@
 var javaVersion = 17;
 group = "com.github.webmorph"
-version = "1.2.1"
+version = "1.2.2"
 
 plugins {
     id("java-library")
