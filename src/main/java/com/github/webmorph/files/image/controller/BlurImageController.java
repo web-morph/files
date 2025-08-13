@@ -9,7 +9,6 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Controller;
 import reactor.core.publisher.Mono;
 
-import java.util.AbstractMap;
 import java.util.Map;
 
 /**
@@ -29,8 +28,8 @@ public class BlurImageController {
      * @param request the blur image request containing file name and dimensions
      * @return Mono emitting a key-value pair with the content name
      */
-    @MessageMapping("image.resize")
-    public Mono<Map<String, String>> resizeImage(@Payload BlurImageRequest request) {
+    @MessageMapping("image.blur")
+    public Mono<Map<String, String>> blurImage(@Payload BlurImageRequest request) {
         return Mono.fromCallable(() -> new LocalImage(this.fileService.pathOf(request.name)).blur(new Size(request.width, request.height)))
                 .map(localImage -> Map.of("content-name", localImage.getInput().toFile().getName()));
     }
